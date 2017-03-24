@@ -36,7 +36,22 @@
             // We must add the contact materials to the world
             world.addContactMaterial(wheelGroundContactMaterial);
             var chassisShape;
+            
+            var objMaterial = new THREE.MeshNormalMaterial();
+            var mesh = new THREE.Mesh( new THREE.BoxGeometry( 0.1, 0.1, 0.1 ), objMaterial );
+            demo.scene.add( mesh );
+            mesh.add( demo.camera );
+            demo.camera.position.set(-60,0,40);
+            demo.camera.up.set(0,0,1);
+            // chase camera
+            //demo.attachCamera(mesh);
+            //world.attachCamera(mesh);
+            //demo.camera.position.set(0,2,5);
+            
             chassisShape = new CANNON.Box(new CANNON.Vec3(2, 1,0.5));
+
+            
+            
             var chassisBody = new CANNON.Body({ mass: mass });
             chassisBody.addShape(chassisShape);
             chassisBody.position.set(0, 0, 4);
@@ -62,6 +77,7 @@
             vehicle = new CANNON.RaycastVehicle({
                 chassisBody: chassisBody,
             });
+            //var mesh = new THREE.Mesh(new THREE)
             options.chassisConnectionPointLocal.set(1, 1, 0);
             vehicle.addWheel(options);
             options.chassisConnectionPointLocal.set(1, -1, 0);
@@ -95,8 +111,12 @@
                     var wheelBody = wheelBodies[i];
                     wheelBody.position.copy(t.position);
                     wheelBody.quaternion.copy(t.quaternion);
+                    mesh.position.copy(chassisBody.position);
+                    mesh.quaternion.copy(chassisBody.quaternion);
                 }
             });
+            
+            
             var matrix = [];
             var sizeX = 5,
                 sizeY = 5;

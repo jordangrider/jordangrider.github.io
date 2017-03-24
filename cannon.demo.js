@@ -449,7 +449,7 @@ CANNON.Demo = function(options){
         document.body.appendChild( container );
 
         // Camera
-        camera = new THREE.PerspectiveCamera( 24, SCREEN_WIDTH / SCREEN_HEIGHT, NEAR, FAR );
+        camera = that.camera = new THREE.PerspectiveCamera( 24, SCREEN_WIDTH / SCREEN_HEIGHT, NEAR, FAR );
 
         camera.up.set(0,0,1);
         camera.position.set(0,30,20);
@@ -690,6 +690,8 @@ CANNON.Demo = function(options){
 
     var t = 0, newTime, delta;
 
+
+
     function animate(){
         requestAnimationFrame( animate );
         if(!settings.paused){
@@ -914,6 +916,11 @@ CANNON.Demo.prototype.setGlobalSpookParams = function(k,d,h){
 CANNON.Demo.prototype.getWorld = function(){
     return this.world;
 };
+
+CANNON.Demo.prototype.attachCamera = function attachCamera( Incomingmesh ){
+        Incomingmesh.add( camera );
+        this.world.camera.position.set(0,2,5);
+    }
 
 CANNON.Demo.prototype.addVisual = function(body){
     var s = this.settings;
