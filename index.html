@@ -2,6 +2,12 @@
 <html>
     <head>
         <link rel="stylesheet" href="styles.css" />
+                <meta charset="utf-8">
+        <title>Jordan Grider</title>
+        <style>
+            
+
+        </style>
     </head>
     <body>
         <!-- <img src=https://res-1.cloudinary.com/simpleview/image/upload/c_limit,f_auto,h_1200,q_75,w_1200/v1/clients/norway/Trolltunga-norway-must-see-nature-attractions-2-1_3c2d1d6d-df0f-40f4-89ea-ea0abe488b13.jpg>
@@ -16,8 +22,20 @@
     <script src="Detector.js"></script>
     <script src="Stats.js"></script>
     <script src="smoothie.js"></script>
+    
+    
+    
     <script>
 
+
+
+        /*global CANNON*/
+        /*global THREE*/
+            
+         var blocker = document.getElementById( 'blocker' );
+         var instructions = document.getElementById( 'instructions' );    
+         
+            
         var demo = new CANNON.Demo();
         var mass = 150;
         var vehicle;
@@ -25,7 +43,7 @@
             var world = demo.getWorld();
             world.broadphase = new CANNON.SAPBroadphase(world);
             world.gravity.set(0, 0, -10);
-            world.defaultContactMaterial.friction = 0;
+            world.defaultContactMaterial.friction = .1;
             var groundMaterial = new CANNON.Material("groundMaterial");
             var wheelMaterial = new CANNON.Material("wheelMaterial");
             var wheelGroundContactMaterial = window.wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, groundMaterial, {
@@ -48,14 +66,14 @@
             //world.attachCamera(mesh);
             //demo.camera.position.set(0,2,5);
             
-            chassisShape = new CANNON.Box(new CANNON.Vec3(2, 1,0.5));
-
-            
-            
+            chassisShape = new CANNON.Box(new CANNON.Vec3(2, 1,0.35));
             var chassisBody = new CANNON.Body({ mass: mass });
             chassisBody.addShape(chassisShape);
-            chassisBody.position.set(0, 0, 4);
-            chassisBody.angularVelocity.set(0, 0, 0.5);
+            chassisBody.position.set(-10, 5, 2);
+            chassisBody.angularVelocity.set(0, 0, 0);
+
+            chassisBody.quaternion.set(0,0,-1,1);
+            console.log(chassisBody.quaternion);
             demo.addVisual(chassisBody);
             var options = {
                 radius: 0.5,
@@ -78,13 +96,13 @@
                 chassisBody: chassisBody,
             });
             //var mesh = new THREE.Mesh(new THREE)
-            options.chassisConnectionPointLocal.set(1, 1, 0);
+            options.chassisConnectionPointLocal.set(1.5, 1, 0);
             vehicle.addWheel(options);
-            options.chassisConnectionPointLocal.set(1, -1, 0);
+            options.chassisConnectionPointLocal.set(1.5, -1, 0);
             vehicle.addWheel(options);
-            options.chassisConnectionPointLocal.set(-1, 1, 0);
+            options.chassisConnectionPointLocal.set(-1.5, 1, 0);
             vehicle.addWheel(options);
-            options.chassisConnectionPointLocal.set(-1, -1, 0);
+            options.chassisConnectionPointLocal.set(-1.5, -1, 0);
             vehicle.addWheel(options);
             vehicle.addToWorld(world);
             var wheelBodies = [];
@@ -139,21 +157,107 @@
             world.addBody(hfBody);
             demo.addVisual(hfBody);
             
+            var nameArray = [ "................................................",
+                              ".######...####...#####...#####....####...##..##.",
+                              ".....##..##..##..##..##..##..##..##..##..###.##.",
+                              ".....##..##..##..#####...##..##..######..##.###.",
+                              ".##..##..##..##..##..##..##..##..##..##..##..##.",
+                              "..####....####...##..##..#####...##..##..##..##.",
+                              "................................................",
+                              "..####...#####...######..#####...######..#####..",
+                              ".##......##..##....##....##..##..##......##..##.",
+                              ".##.###..#####.....##....##..##..####....#####..",
+                              ".##..##..##..##....##....##..##..##......##..##.",
+                              "..####...##..##..######..#####...######..##..##.",
+                              "................................................"];
+
+            
             // Add spheres
+            var nameMatrix = [];
+            var nameArrayX = nameArray[0].length,
+                nameArrayY = nameArray.length;
+            console.log(nameArrayX);
+            console.log(nameArrayY);
+            var blockmass = 1;
+            var blocksize = 0.3;
+            var xOffset = -20;
+            var yOffset = -10;
+            var zOffest = blocksize;
+            var NM = 4;
+            
+            for(var i=0; i <= nameArrayY-1; i++){
+                for(var k = 0; k <= NM; k++){
+                nameMatrix.push([]);
+                for(var j=0; j <= nameArrayX-1; j++){
+                    var stepOffset = 0;
+                    if(nameArray[i].charAt(j)=="#"){
+                        height = 0.25 + stepOffset;
+                    } else {
+                        height = 0 + stepOffset;
+                    }
+                    for(var l = 0; l <= NM; l++){
+                    nameMatrix[i*(NM+1)+k].push(height);
+                    }
+                }
+                }
+            }
+            
+            console.log(nameMatrix);
+            
+            var nameMesh = new CANNON.Heightfield(nameMatrix, {
+                elementSize: 0.1
+            });
+            
+            var nameBody = new CANNON.Body({ mass: 0 });
+            nameBody.addShape(nameMesh);
+            nameBody.position.set(2.5, -18, 7);
+            nameBody.quaternion.setFromEuler(Math.PI/2, Math.PI*(2/2), Math.PI*(3/2));
+            world.addBody(nameBody);
+            demo.addVisual(nameBody);
+            
+            /*
+            var cubeShape = new CANNON.Box(new CANNON.Vec3(blocksize, blocksize, blocksize));
+                    var cubeBody = new CANNON.Body({ mass: blockmass });
+                    cubeBody.addShape(cubeShape);
+                    cubeBody.position.set(xOffset + 2*i*blocksize, yOffset + -2*j*blocksize, zOffest);
+                    world.addBody(cubeBody);
+                    demo.addVisual(cubeBody);
+            */
+            
             var spheresX = 10,
-                spheresY = 10;
+                spheresY = 10,
+                spheresZ = 10;
             var spheremass = 1;
             var spheresize = 0.4;
             for(var i=0; i<spheresX - 1; i++){
                 for (var j = 0; j < spheresY - 1; j++) {
-                    if(i===0 || i >= spheresX-2 || j===0 || j >= spheresY-2)
+                    for (var k = 0; k < spheresZ - 1; k++) {
+                    //if(i===0 || i >= spheresX-2 || j===0 || j >= spheresY-2)
+                    //    continue;
+                    if(k>i || k>j){
                         continue;
+                    }
+                    
+                    if(i>4){
+                      if(k>8-i){
+                          continue;
+                      }
+                    }
+                    
+                    if(j>4){
+                      if(k>8-j){
+                          continue;
+                      }
+                    }
+                        
+                    
                     var cubeShape = new CANNON.Box(new CANNON.Vec3(spheresize, spheresize, spheresize));
                     var cubeBody = new CANNON.Body({ mass: spheremass });
                     cubeBody.addShape(cubeShape);
-                    cubeBody.position.set(0.25 + i, 0.25 + j, 3);
+                    cubeBody.position.set(i + -13, j -15, k*1 + 1);
                     world.addBody(cubeBody);
                     demo.addVisual(cubeBody);
+                    }
                 }
             }
         });
