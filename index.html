@@ -59,7 +59,7 @@
             var mesh = new THREE.Mesh( new THREE.BoxGeometry( 0.1, 0.1, 0.1 ), objMaterial );
             demo.scene.add( mesh );
             mesh.add( demo.camera );
-            demo.camera.position.set(-60,0,40);
+            demo.camera.position.set(-40,0,10);
             demo.camera.up.set(0,0,1);
             // chase camera
             //demo.attachCamera(mesh);
@@ -254,7 +254,7 @@
                     var cubeShape = new CANNON.Box(new CANNON.Vec3(spheresize, spheresize, spheresize));
                     var cubeBody = new CANNON.Body({ mass: spheremass });
                     cubeBody.addShape(cubeShape);
-                    cubeBody.position.set(i + -13, j -15, k*1 + 1);
+                    cubeBody.position.set(i + -14, j -15, k*1 + 1);
                     world.addBody(cubeBody);
                     demo.addVisual(cubeBody);
                     }
